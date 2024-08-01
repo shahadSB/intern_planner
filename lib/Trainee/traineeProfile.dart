@@ -7,8 +7,8 @@ import 'package:intern_planner/Login/login.dart';
 import 'package:intern_planner/Widgets/traineeNav.dart';
 import 'package:intl/intl.dart';
 
-/// ProfilePage is a StatefulWidget that displays and allows the user to edit their profile details.
-/// It also handles fetching and updating trainee information from Firestore.
+// ProfilePage is a StatefulWidget that displays and allows the user to edit their profile details.
+// It also handles fetching and updating trainee information from Firestore.
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _initialize(); // Initialize the state by loading user data
   }
 
-  /// Initializes the profile page by fetching the current user and their details.
+  // Initializes the profile page by fetching the current user and their details.
   Future<void> _initialize() async {
     currentUser = await getCurrentUser(); // Retrieve the currently authenticated user
     if (currentUser != null) {
@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  /// Fetches the details of the trainee from Firestore using the current user's ID.
+  // Fetches the details of the trainee from Firestore using the current user's ID.
   Future<void> _fetchTraineeDetails() async {
     if (currentUser != null) {
       await fetchTraineeDetails(
@@ -76,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  /// Fetches the name of the supervisor from Firestore based on the supervisor's ID.
+  // Fetches the name of the supervisor from Firestore based on the supervisor's ID.
   Future<void> _fetchSupervisorName(String supervisorId) async {
     await fetchSupervisorName(
       supervisorId,
@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  /// Updates the profile data of the current user in Firestore.
+  // Updates the profile data of the current user in Firestore.
   Future<void> _updateProfileData() async {
     if (currentUser == null || trainee == null) return;
 
@@ -328,7 +328,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  /// Builds a customizable text field widget.
+  // Builds a customizable text field widget.
   Widget _buildTextField({
     required String label,
     required String initialValue,
