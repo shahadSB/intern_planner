@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intern_planner/Database/TraineeDetails.dart';
 
-class TraineeDetailsPage extends StatelessWidget {
+class TraineeListDetailsPage extends StatelessWidget {
   final Trainee trainee;
   final void Function(Trainee) onDelete;
 
-  TraineeDetailsPage({required this.trainee, required this.onDelete});
+  TraineeListDetailsPage({required this.trainee, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {

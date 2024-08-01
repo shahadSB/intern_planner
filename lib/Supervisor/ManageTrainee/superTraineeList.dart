@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intern_planner/Database/TraineeDetails.dart';
 import 'package:intern_planner/Login/login.dart';
 import 'package:intern_planner/Supervisor/ManageTrainee/superAddTrainee.dart';
+import 'package:intern_planner/Supervisor/ManageTrainee/superTraineeDetails.dart';
 import 'package:intern_planner/Widgets/supervisorNav.dart';
 
 class TraineePage extends StatefulWidget {
@@ -125,7 +126,7 @@ class _TraineePageState extends State<TraineePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TraineeDetailsPage(
+                        builder: (context) => TraineeListDetailsPage(
                           trainee: trainee,
                           onDelete: _deleteTrainee,
                         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intern_planner/Login/resetPassword.dart';
 import 'package:intern_planner/Login/signup.dart';
+import 'package:intern_planner/Supervisor/superHomepage.dart';
 import 'package:intern_planner/Trainee/traineeHomepage.dart';
 
 class LoginPage extends StatefulWidget {

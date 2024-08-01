@@ -286,17 +286,13 @@ class _EventDetailPageState extends State<EventDetailPage> {
                         ? 'None'
                         : selectedTrainees.map((id) => traineeNames[id] ?? 'Unknown').join(', '),
                     ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                   if (isEditing)
                     ElevatedButton(
                       onPressed: _saveEvent,
                       child: Text('Save Changes'),
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Color.fromARGB(255, 195, 77, 69),
-                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                        backgroundColor: Color.fromARGB(255, 187, 217, 164),
                       ),
                     ),
                 ],
@@ -308,117 +304,75 @@ class _EventDetailPageState extends State<EventDetailPage> {
     );
   }
 
-  Widget buildTextField(String label, TextEditingController controller, {bool enabled = true, IconData? suffixIcon}) {
+  Widget buildTextField(String label, TextEditingController controller, {bool enabled = true}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.black),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 224, 224, 224)),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        filled: true,
-        fillColor: Color.fromARGB(255, 255, 255, 255),
-        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+        border: OutlineInputBorder(),
+        enabled: enabled,
       ),
-      enabled: enabled,
-    );
-  }
-
-  Widget buildDateTimeField() {
-    return InkWell(
-      onTap: isEditing
-          ? () async {
-              await _selectDate(context);
-              await _selectTime(context);
-            }
-          : null,
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: 'Date & Time',
-          labelStyle: TextStyle(color: Color(0xFF31231A)),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 224, 224, 224)),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          filled: true,
-          fillColor: Color.fromARGB(255, 255, 255, 255),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(DateFormat('MMM dd, yyyy').format(selectedDate)),
-            Text(DateFormat('h:mm a').format(DateTime(
-              selectedDate.year,
-              selectedDate.month,
-              selectedDate.day,
-              selectedTime.hour,
-              selectedTime.minute,
-            ))),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildDropdownField(
-    String label,
-    String hint,
-    String? selectedValue,
-    List<String> items, {
-    required Function(String?) onChanged,
-    bool enabled = true,
-  }) {
-    return IgnorePointer(
-      ignoring: !enabled,
-      child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: Colors.black),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 224, 224, 224)),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          filled: true,
-          fillColor: Color.fromARGB(255, 255, 255, 255),
-        ),
-        value: selectedValue,
-        items: items
-            .map((item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(item),
-                ))
-            .toList(),
-        onChanged: enabled ? onChanged : null,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please select a type';
-          }
-          return null;
-        },
-      ),
+      maxLines: null,
     );
   }
 
   Widget buildReadOnlyField(String label, String value) {
-    return TextField(
+    return InputDecorator(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.black),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 224, 224, 224)),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        filled: true,
-        fillColor: Color.fromARGB(255, 255, 255, 255),
+        border: OutlineInputBorder(),
       ),
-      controller: TextEditingController(text: value),
-      enabled: false, // Read-only
+      child: Text(value),
+    );
+  }
+
+  Widget buildDateTimeField() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: InkWell(
+            onTap: isEditing ? () => _selectDate(context) : null,
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: 'Date',
+                border: OutlineInputBorder(),
+              ),
+              child: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
+            ),
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: InkWell(
+            onTap: isEditing ? () => _selectTime(context) : null,
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: 'Time',
+                border: OutlineInputBorder(),
+              ),
+              child: Text(selectedTime.format(context)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDropdownField(String label, String hint, String? value, List<String> options, {ValueChanged<String?>? onChanged, bool enabled = true}) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+      ),
+      hint: Text(hint),
+      onChanged: enabled ? onChanged : null,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
     );
   }
 }
-
-
-
-  

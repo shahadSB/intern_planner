@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intern_planner/Widgets/buildWidgets.dart'; // Import the buildWidgets file
 
+/// This page allows a trainee to add a new task.
 class AddTaskPage extends StatefulWidget {
   final User? currentUser;
 
@@ -135,6 +136,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
+  /// Builds the date picker field for selecting the due date of the task.
   Widget _buildDateField() {
     return TextButton(
       onPressed: () {
@@ -160,6 +162,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
+  /// Builds the time picker field for selecting the due time of the task.
   Widget _buildTimeField() {
     return TextButton(
       onPressed: () {
@@ -183,6 +186,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
+  /* 
+  Assigns the task to the current trainee and saves it to Firestore.
+
+[taskData] is a map containing the task details to be saved.
+  */
   Future<void> _assignTaskToTrainee(Map<String, dynamic> taskData) async {
     if (widget.currentUser == null) return;
 

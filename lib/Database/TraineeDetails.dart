@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
@@ -87,82 +87,76 @@ Future<void> fetchSupervisorName(
   }
 }
 
-class TraineeDetailsPage extends StatefulWidget {
-  @override
-  _TraineeDetailsPageState createState() => _TraineeDetailsPageState();
-}
+// class TraineeDetailsPage extends StatefulWidget {
+//   @override
+//   _TraineeDetailsPageState createState() => _TraineeDetailsPageState();
+// }
 
-class _TraineeDetailsPageState extends State<TraineeDetailsPage> {
-  Trainee? _trainee;
-  String _supervisorName = '';
+// class _TraineeDetailsPageState extends State<TraineeDetailsPage> {
+//   Trainee? _trainee;
+//   String _supervisorName = '';
 
-  @override
-  void initState() {
-    super.initState();
-    _loadTraineeDetails();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadTraineeDetails();
+//   }
 
-  Future<void> _loadTraineeDetails() async {
-    User? user = await getCurrentUser();
-    if (user != null) {
-      fetchTraineeDetails(
-        user.uid,
-        (trainee) {
-          setState(() {
-            _trainee = trainee;
-          });
-          _loadSupervisorName(trainee.supervisorId);
-        },
-        (error) {
-          // Handle error
-          print(error);
-        },
-      );
-    }
-  }
+//   Future<void> _loadTraineeDetails() async {
+//     User? user = await getCurrentUser();
+//     if (user != null) {
+//       fetchTraineeDetails(
+//         user.uid,
+//         (trainee) {
+//           setState(() {
+//             _trainee = trainee;
+//           });
+//           _loadSupervisorName(trainee.supervisorId);
+//         },
+//         (error) {
+//           // Handle error
+//           print(error);
+//         },
+//       );
+//     }
+//   }
 
-  Future<void> _loadSupervisorName(String supervisorId) async {
-    fetchSupervisorName(
-      supervisorId,
-      (supervisorName) {
-        setState(() {
-          _supervisorName = supervisorName;
-        });
-      },
-      (error) {
-        // Handle error
-        print(error);
-      },
-    );
-  }
+//   Future<void> _loadSupervisorName(String supervisorId) async {
+//     fetchSupervisorName(
+//       supervisorId,
+//       (supervisorName) {
+//         setState(() {
+//           _supervisorName = supervisorName;
+//         });
+//       },
+//       (error) {
+//         // Handle error
+//         print(error);
+//       },
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Trainee Details'),
-      ),
-      body: _trainee == null
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Name: ${_trainee!.name}'),
-                  Text('Employee ID: ${_trainee!.employeeId}'),
-                  Text('Email: ${_trainee!.email}'),
-                  Text('Date of Birth: ${_trainee!.dob}'),
-                  Text('Supervisor: $_supervisorName'),
-                ],
-              ),
-            ),
-    );
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: TraineeDetailsPage(),
-  ));
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Trainee Details'),
+//       ),
+//       body: _trainee == null
+//           ? Center(child: CircularProgressIndicator())
+//           : Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text('Name: ${_trainee!.name}'),
+//                   Text('Employee ID: ${_trainee!.employeeId}'),
+//                   Text('Email: ${_trainee!.email}'),
+//                   Text('Date of Birth: ${_trainee!.dob}'),
+//                   Text('Supervisor: $_supervisorName'),
+//                 ],
+//               ),
+//             ),
+//     );
+//   }
+// }
