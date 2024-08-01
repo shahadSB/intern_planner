@@ -7,25 +7,32 @@ import 'package:intern_planner/Supervisor/ManageTrainee/superAddTrainee.dart';
 import 'package:intern_planner/Supervisor/ManageTrainee/superTraineeDetails.dart';
 import 'package:intern_planner/Widgets/supervisorNav.dart';
 
+// StatefulWidget that displays a list of trainees managed by the current supervisor.
 class TraineePage extends StatefulWidget {
   @override
   _TraineePageState createState() => _TraineePageState();
 }
 
 class _TraineePageState extends State<TraineePage> {
-  User? currentUser;
-  int _selectedIndex = 0;
+  User? currentUser; // The currently authenticated user.
+  int _selectedIndex = 0; // The index of the selected bottom navigation item.
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
+    _getCurrentUser(); // Retrieve the current user on initialization.
   }
 
+  // Retrieves the currently authenticated user from FirebaseAuth.
   Future<void> _getCurrentUser() async {
     currentUser = FirebaseAuth.instance.currentUser;
   }
 
+  /* 
+    Deletes a trainee from the Firestore database.
+    [trainee] is the Trainee object to be deleted. The deletion is performed
+    from the collection of trainees associated with the current supervisor.
+  */
   void _deleteTrainee(Trainee trainee) async {
     final supervisorId = currentUser?.uid;
     if (supervisorId == null) return;
@@ -47,7 +54,6 @@ class _TraineePageState extends State<TraineePage> {
           .delete();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +103,13 @@ class _TraineePageState extends State<TraineePage> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: Image.asset('resources/tamimi.gif', // Path to your GIF
-                width: 50.0,
-                height: 50.0,
-              ));
+              return Center(
+                child: Image.asset(
+                  'resources/tamimi.gif',
+                  width: 50.0,
+                  height: 50.0,
+                ),
+              );
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -113,7 +122,8 @@ class _TraineePageState extends State<TraineePage> {
                 id: doc.id,
                 employeeId: doc['employeeId'],
                 email: doc['email'],
-                dob: doc['dateOfBirth'], supervisorId: '',
+                dob: doc['dateOfBirth'],
+                supervisorId: '', // Supervisor ID is not needed for this display
               );
             }).toList();
 
@@ -200,7 +210,7 @@ class _TraineePageState extends State<TraineePage> {
             context,
             MaterialPageRoute(
               builder: (context) => AddTraineePage(onAdd: (trainee) {
-                // No need to manually add trainee, StreamBuilder will update the list automatically
+                // No need to manually add trainee; StreamBuilder will update the list automatically
               }),
             ),
           );

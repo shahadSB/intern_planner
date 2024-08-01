@@ -9,35 +9,37 @@ import 'package:intern_planner/Widgets/supervisorNav.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-
+// A StatefulWidget that represents the calendar page for supervisors.
 class CalendarPage extends StatefulWidget {
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  int _selectedIndex = 1;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  int _selectedIndex = 1; // Index for the bottom navigation bar
+  CalendarFormat _calendarFormat = CalendarFormat.month; // Calendar format (month view by default)
+  DateTime _focusedDay = DateTime.now(); // Currently focused day on the calendar
+  DateTime? _selectedDay; // Currently selected day on the calendar
 
-  List<Event> events = [];
-  User? currentUser;
-  bool _isLoading = true;
+  List<Event> events = []; // List to hold events
+  User? currentUser; // Currently authenticated user
+  bool _isLoading = true; // Loading state indicator
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
+    _getCurrentUser(); // Fetch the current user when the widget is initialized
   }
 
+  // Fetches the currently authenticated user from FirebaseAuth and initiates event listening.
   void _getCurrentUser() {
     currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      _listenForEvents();
+      _listenForEvents(); // Start listening for event updates if user is authenticated
     }
   }
 
+  // Listens for real-time updates to events from Firestore based on the current user's ID.
   void _listenForEvents() {
     FirebaseFirestore.instance
         .collection('events')
@@ -46,16 +48,17 @@ class _CalendarPageState extends State<CalendarPage> {
         .listen((snapshot) {
       setState(() {
         events = snapshot.docs.map((doc) => Event.fromFirestore(doc)).toList();
-        _isLoading = false;
+        _isLoading = false; // Stop loading once events are fetched
       });
     });
   }
 
+  // Fetches events from Firestore based on the current user's ID.
   Future<void> _fetchEvents() async {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('events')
-          .where('adminID', isEqualTo: currentUser?.uid) //there is admin ID in both collections!!!
+          .where('adminID', isEqualTo: currentUser?.uid)
           .get();
 
       setState(() {
@@ -63,22 +66,25 @@ class _CalendarPageState extends State<CalendarPage> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error fetching events: $e');
+      print('Error fetching events: $e'); // Handle any errors during the fetch
     }
   }
 
+  // Returns a list of events for a given day.
   List<Event> _getEventsForDay(DateTime day) {
     return events.where((event) {
       return isSameDay(event.dueDate, day);
     }).toList();
   }
 
+  // Returns a list of upcoming events (events due today or in the future).
   List<Event> _getUpcomingEvents() {
     return events.where((event) {
       return event.dueDate.isAfter(DateTime.now()) || isSameDay(event.dueDate, DateTime.now());
     }).toList();
   }
 
+  // Returns a list of passed events (events that are due in the past).
   List<Event> _getPassedEvents() {
     return events.where((event) {
       return event.dueDate.isBefore(DateTime.now());
@@ -96,16 +102,16 @@ class _CalendarPageState extends State<CalendarPage> {
         title: Text(
           'Supervisor Homepage',
           style: TextStyle(
-            fontFamily: 'YourCustomFont', // Replace with the desired font family
-            color: Color(0xFF31231A), // Set the text color
+            fontFamily: 'YourCustomFont', 
+            color: Color(0xFF31231A), 
             fontSize: 20.0,
-            fontWeight: FontWeight.bold, // Adjust the font size as needed
+            fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout), // Use the logout icon
+            icon: Icon(Icons.logout), // Logout icon
             onPressed: () {
               Navigator.push(
                 context,
@@ -130,7 +136,7 @@ class _CalendarPageState extends State<CalendarPage> {
         child: Center(
           child: _isLoading
               ? Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif', 
                   width: 50.0,
                   height: 50.0,
                 )
@@ -142,7 +148,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         alignment: Alignment.centerRight,
                         child: IconButton(
                           icon: const Icon(Icons.info_outline, size: 25),
-                          onPressed: _showInfoDialog,
+                          onPressed: _showInfoDialog, // Show information dialog on button press
                         ),
                       ),
                       SizedBox(height: 10),
@@ -187,7 +193,6 @@ class _CalendarPageState extends State<CalendarPage> {
                           calendarBuilders: CalendarBuilders(
                             markerBuilder: (context, date, events) {
                               if (events.isNotEmpty) {
-                                // Check if there are both types of events
                                 bool hasDeadline = events.any((event) => (event as Event).type == 'Deadline');
                                 bool hasMeeting = events.any((event) => (event as Event).type == 'Meeting');
 
@@ -290,9 +295,9 @@ class _CalendarPageState extends State<CalendarPage> {
       bottomNavigationBar: SupervisorNavBar(
         currentIndex: _selectedIndex,
         onItemTapped: (index) {
-          onItemTapped(context, index); // Call the refactored method
+          onItemTapped(context, index); // Handle bottom navigation item tap
           setState(() {
-            _selectedIndex = index; // Update the state
+            _selectedIndex = index;
           });
         },
       ),
@@ -314,8 +319,7 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  
-
+  // Builds a card widget for displaying an individual event.
   Widget _buildEventCard(BuildContext context, Event event) {
     return InkWell(
       onTap: () {
@@ -383,6 +387,7 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
+  // Updates an event's details in Firestore.
   void _updateEvent(String eventId, Event updatedEvent) {
     FirebaseFirestore.instance.collection('events').doc(eventId).update({
       'title': updatedEvent.title,
@@ -391,10 +396,11 @@ class _CalendarPageState extends State<CalendarPage> {
     }).then((_) {
       print('Event updated successfully');
     }).catchError((error) {
-      print('Failed to update event: $error');
+      print('Failed to update event: $error'); // Handle update errors
     });
   }
 
+  // Displays a dialog showing information about event markers.
   void _showInfoDialog() {
     showDialog(
       context: context,
@@ -429,7 +435,8 @@ class _CalendarPageState extends State<CalendarPage> {
               children: [
                 CircleAvatar(
                   backgroundColor: Color.fromARGB(255, 84, 166, 224),
-                  radius: 10),
+                  radius: 10,
+                ),
                 SizedBox(width: 10),
                 Text('Deadlines and Meetings'),
               ],
@@ -447,21 +454,23 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
-class CalendarEvent {
-  final String id;
-  final String title;
-  final String type;
-  final DateTime dueDate;
+// // A class representing an event in the calendar.
+// class CalendarEvent {
+//   final String id;
+//   final String title;
+//   final String type;
+//   final DateTime dueDate;
 
-  CalendarEvent({required this.id, required this.title, required this.type, required this.dueDate});
+//   CalendarEvent({required this.id, required this.title, required this.type, required this.dueDate});
 
-  factory CalendarEvent.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return CalendarEvent(
-      id: doc.id,
-      title: data['title'] ?? '',
-      type: data['type'] ?? 'Meeting',
-      dueDate: (data['dueDate'] as Timestamp).toDate(),
-    );
-  }
-}
+//   // Creates an instance of [CalendarEvent] from a Firestore document snapshot.
+//   factory CalendarEvent.fromFirestore(DocumentSnapshot doc) {
+//     final data = doc.data() as Map<String, dynamic>;
+//     return CalendarEvent(
+//       id: doc.id,
+//       title: data['title'] ?? '',
+//       type: data['type'] ?? 'Meeting',
+//       dueDate: (data['dueDate'] as Timestamp).toDate(),
+//     );
+//   }
+// }

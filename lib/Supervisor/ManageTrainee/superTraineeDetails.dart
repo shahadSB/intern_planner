@@ -2,9 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intern_planner/Database/TraineeDetails.dart';
 
+/* 
+  A page that displays detailed information about a trainee.
+  This page includes a profile picture, name, ID, email, and date of birth of the trainee.
+  It also provides an option to delete the trainee's profile.
+*/
 class TraineeListDetailsPage extends StatelessWidget {
-  final Trainee trainee;
-  final void Function(Trainee) onDelete;
+  final Trainee trainee; // The trainee whose details are to be displayed.
+  final void Function(Trainee) onDelete; // Callback function to handle deletion of the trainee.
 
   TraineeListDetailsPage({required this.trainee, required this.onDelete});
 
@@ -16,10 +21,10 @@ class TraineeListDetailsPage extends StatelessWidget {
         title: const Text(
           "Trainee Profile",
           style: TextStyle(
-            fontFamily: 'YourCustomFont', // Replace with the desired font family
-            color: Color(0xFF31231A), // Set the text color
+            fontFamily: 'YourCustomFont', 
+            color: Color(0xFF31231A), 
             fontSize: 20.0,
-            fontWeight: FontWeight.bold, // Adjust the font size as needed
+            fontWeight: FontWeight.bold, 
           ),
         ),
         centerTitle: true,
@@ -27,9 +32,10 @@ class TraineeListDetailsPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
+              // Clear the supervisorId field before deleting the trainee
               await _clearSupervisorId(trainee.id);
-              onDelete(trainee);
-              Navigator.pop(context);
+              onDelete(trainee); // Notify parent widget about deletion
+              Navigator.pop(context); // Close the details page
             },
           ),
         ],
@@ -68,6 +74,7 @@ class TraineeListDetailsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 23.0),
+                    // Display the trainee's profile picture
                     CircleAvatar(
                       radius: 55,
                       backgroundColor: const Color.fromARGB(255, 187, 217, 164),
@@ -81,6 +88,7 @@ class TraineeListDetailsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 23.0),
+                    // Display trainee details
                     _buildInfoRow("Trainee Name", trainee.name),
                     _buildInfoRow("Trainee ID", trainee.employeeId),
                     _buildInfoRow("Trainee Email", trainee.email),
@@ -95,12 +103,21 @@ class TraineeListDetailsPage extends StatelessWidget {
     );
   }
 
+  /* 
+    Clears the supervisorId field from the trainee document in Firestore.
+    [traineeId] is the ID of the trainee whose supervisorId needs to be cleared.
+  */
   Future<void> _clearSupervisorId(String traineeId) async {
     await FirebaseFirestore.instance.collection('users').doc(traineeId).update({
       'supervisorId': FieldValue.delete(),
     });
   }
 
+  /* 
+    Builds a row displaying a label and a value.
+    [label] is the text label for the information.
+    [value] is the text value to display.
+  */
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 24.0),

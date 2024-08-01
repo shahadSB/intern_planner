@@ -3,7 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intern_planner/Database/TraineeDetails.dart';
 
+/* 
+  A page for adding a trainee to a supervisor's list.
+  This page allows the supervisor to search for a trainee by email,
+  view the trainee's details, and assign them to themselves if they are
+  not already assigned to another supervisor.
+*/
 class AddTraineePage extends StatefulWidget {
+  // Callback function invoked when a trainee is successfully added.
   final void Function(Trainee) onAdd;
 
   AddTraineePage({required this.onAdd});
@@ -18,12 +25,13 @@ class _AddTraineePageState extends State<AddTraineePage> {
   final TextEditingController _employeeIdController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
 
-  bool _loading = false;
-  String? _errorMessage;
-  String? _successMessage;
-  String? _infoMessage;
-  bool _isTraineeFetched = false;
+  bool _loading = false; // Indicates whether data is being loaded
+  String? _errorMessage; // Error message to display
+  String? _successMessage; // Success message to display
+  String? _infoMessage; // Information message to display
+  bool _isTraineeFetched = false; // Indicates whether trainee data has been fetched
 
+  // Searches for a trainee by email and updates the form fields with the trainee's data.
   Future<void> _searchTrainee() async {
     setState(() {
       _loading = true;
@@ -50,7 +58,6 @@ class _AddTraineePageState extends State<AddTraineePage> {
         setState(() {
           _errorMessage = 'No trainee found with this email';
           _loading = false;
-          // Reset the search bar and other fields
           _emailController.clear();
           _nameController.clear();
           _employeeIdController.clear();
@@ -61,7 +68,6 @@ class _AddTraineePageState extends State<AddTraineePage> {
       }
 
       final traineeData = snapshot.docs.first.data();
-      // final traineeId = snapshot.docs.first.id;
 
       // Update form fields with fetched data
       _nameController.text = traineeData['name'] ?? '';
@@ -73,14 +79,13 @@ class _AddTraineePageState extends State<AddTraineePage> {
         if (traineeData['supervisorId'] != supervisorId) {
           setState(() {
             _errorMessage = 'This trainee has another supervisor';
-            // Reset the search bar and other fields
             _emailController.clear();
             _nameController.clear();
             _employeeIdController.clear();
             _dobController.clear();
             _isTraineeFetched = false;
           });
-          return; // Stop further processing
+          return;
         } else {
           setState(() {
             _infoMessage = 'This trainee is already assigned to you';
@@ -94,7 +99,6 @@ class _AddTraineePageState extends State<AddTraineePage> {
     } catch (e) {
       setState(() {
         _errorMessage = 'Error fetching trainee data: ${e.toString()}';
-        // Reset the search bar and other fields
         _emailController.clear();
         _nameController.clear();
         _employeeIdController.clear();
@@ -108,6 +112,7 @@ class _AddTraineePageState extends State<AddTraineePage> {
     }
   }
 
+  // Submits the trainee data to be added to the supervisor's list.
   Future<void> _submit() async {
     if (!_isTraineeFetched) {
       setState(() {
@@ -179,6 +184,7 @@ class _AddTraineePageState extends State<AddTraineePage> {
     }
   }
 
+  // Returns the decoration for text input fields.
   InputDecoration _inputDecoration(String labelText) {
     return InputDecoration(
       labelText: labelText,
@@ -241,7 +247,7 @@ class _AddTraineePageState extends State<AddTraineePage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Email field first with search icon
+                // Email field with search icon
                 Row(
                   children: [
                     Expanded(
@@ -283,8 +289,8 @@ class _AddTraineePageState extends State<AddTraineePage> {
                       child: Text('Add Trainee'),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white, 
-                        backgroundColor: Color.fromARGB(255, 195, 77, 69), // Text color
-                        fixedSize: Size(270, 35), // Make the button longer
+                        backgroundColor: Color.fromARGB(255, 195, 77, 69), 
+                        fixedSize: Size(270, 35), // Button size
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
