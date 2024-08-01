@@ -10,67 +10,70 @@ import 'package:intl/intl.dart';
 
 import 'TaskPage/taskTile.dart';
 
+// A StatefulWidget that represents the homepage for a trainee, displaying today's schedule and tasks.
 class TraineeHomepage extends StatefulWidget {
   @override
   _TraineeHomepageState createState() => _TraineeHomepageState();
 }
 
 class _TraineeHomepageState extends State<TraineeHomepage> {
-  int _selectedIndex = 1;
-  List<Event> todayEvents = []; // Updated to use Event class
-  User? currentUser;
-  bool _isLoading = true;
+  int _selectedIndex = 1; // Index for bottom navigation bar
+  List<Event> todayEvents = []; // List to hold events for today
+  User? currentUser; // Holds the currently authenticated user
+  bool _isLoading = true; // Flag to show loading state
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
+    _getCurrentUser(); // Fetch the current user when the widget initializes
   }
 
+  // Fetches the currently authenticated user from FirebaseAuth.
   void _getCurrentUser() {
     currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
-      _fetchTodayEvents();
+      _fetchTodayEvents(); // Fetch today's events if user is authenticated
     }
   }
 
+  // Fetches events for the current day from Firestore.
   Future<void> _fetchTodayEvents() async {
-  final userId = currentUser?.uid;
-  if (userId == null) return;
+    final userId = currentUser?.uid;
+    if (userId == null) return;
 
-  final today = DateTime.now();
-  final startOfDay = DateTime(today.year, today.month, today.day);
-  final endOfDay = startOfDay.add(Duration(days: 1));
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = startOfDay.add(Duration(days: 1));
 
-  try {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('events')
-        .get();
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('events')
+          .get();
 
-    print('Fetched all events: ${querySnapshot.docs.length}'); // Debugging output
+      print('Fetched all events: ${querySnapshot.docs.length}'); // Debugging output
 
-    final events = querySnapshot.docs.where((doc) {
-      final event = Event.fromFirestore(doc);
-      return event.student.contains(userId) && 
-             event.dueDate.isAfter(startOfDay) && 
-             event.dueDate.isBefore(endOfDay);
-    }).map((doc) {
-      return Event.fromFirestore(doc);
-    }).toList();
+      final events = querySnapshot.docs.where((doc) {
+        final event = Event.fromFirestore(doc);
+        return event.student.contains(userId) && 
+               event.dueDate.isAfter(startOfDay) && 
+               event.dueDate.isBefore(endOfDay);
+      }).map((doc) {
+        return Event.fromFirestore(doc);
+      }).toList();
 
-    setState(() {
-      todayEvents = events;
-      _isLoading = false;
-    });
-  } catch (e) {
-    print('Error fetching events: $e');
-    setState(() {
-      _isLoading = false;
-    });
+      setState(() {
+        todayEvents = events;
+        _isLoading = false; // Set loading flag to false after data is fetched
+      });
+    } catch (e) {
+      print('Error fetching events: $e');
+      setState(() {
+        _isLoading = false; // Set loading flag to false in case of an error
+      });
+    }
   }
-}
 
-
+  // Filters and sorts tasks to show only those due today.
   List<Task> _filterAndSortTasksForToday(List<Task> tasks) {
     final today = DateTime.now();
     List<Task> filteredTasks = tasks.where((task) {
@@ -79,14 +82,14 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
           task.dueDate.day == today.day;
     }).toList();
 
-    // Priority mapping
+    // Priority mapping for sorting tasks
     Map<String, int> priorityMapping = {
       'High': 1,
       'Medium': 2,
       'Low': 3,
     };
 
-    // Sort by priority first, then by due time
+    // Sort tasks by priority and then by due time
     filteredTasks.sort((a, b) {
       int priorityComparison = priorityMapping[a.priority]!.compareTo(priorityMapping[b.priority]!);
       if (priorityComparison != 0) {
@@ -141,7 +144,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
         child: _isLoading
             ? Center(
                 child: Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif',
                   width: 50.0,
                   height: 50.0,
                 ),
@@ -179,7 +182,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Center(
                             child: Image.asset(
-                              'resources/tamimi.gif', // Path to your GIF
+                              'resources/tamimi.gif', 
                               width: 50.0,
                               height: 50.0,
                             ),
@@ -256,6 +259,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
     );
   }
 
+  // Builds a schedule item widget for an event.
   Widget _buildScheduleItem(Event event) {
     final borderSide = _getBorderSide(event.type);
     final textColor = _getTextColor(event.type);
@@ -305,6 +309,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
     );
   }
 
+  // Returns the decoration for a schedule item container based on the event type.
   BoxDecoration _getScheduleItemDecoration(BorderSide borderSide) {
     return BoxDecoration(
       color: const Color(0xFFFFFFFF),
@@ -323,6 +328,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
     );
   }
 
+  // Returns the border side color for the schedule item based on event type.
   BorderSide _getBorderSide(String type) {
     switch (type) {
       case 'Deadline':
@@ -335,6 +341,7 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
     }
   }
 
+  // Returns the text color for the event type.
   Color _getTextColor(String type) {
     switch (type) {
       case 'Deadline':

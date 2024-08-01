@@ -7,6 +7,7 @@ import 'package:intern_planner/Trainee/TaskPage/addTask.dart';
 import 'package:intern_planner/Trainee/TaskPage/taskTile.dart';
 import 'package:intern_planner/Widgets/traineeNav.dart';
 
+// A StatefulWidget that manages and displays the tasks for a trainee.
 class TaskManagerScreen extends StatefulWidget {
   @override
   _TaskManagerScreenState createState() => _TaskManagerScreenState();
@@ -24,6 +25,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     _getCurrentUser();
   }
 
+  // Gets the currently authenticated user and starts listening for tasks.
   void _getCurrentUser() {
     currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -35,6 +37,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     }
   }
 
+  // Listens for real-time updates to the tasks collection in Firestore.
   void _listenForTasks() {
     FirebaseFirestore.instance
         .collection('tasks')
@@ -49,6 +52,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     });
   }
 
+  /// Fetches the tasks for the currently authenticated user from Firestore.
   Future<void> _fetchTasks() async {
     try {
       final snapshot = await FirebaseFirestore.instance
@@ -70,6 +74,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     }
   }
 
+  // Sorts the tasks by priority and completion status.
   List<Task> _sortTasksByPriorityAndCompletion(List<Task> tasks) {
     // Priority mapping
     Map<String, int> priorityMapping = {
@@ -94,6 +99,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     return tasks;
   }
 
+  // Shows an information dialog explaining the red mark indicating overdue tasks.
   void _showInfoDialog() {
     showDialog(
       context: context,
@@ -170,7 +176,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
         child: Center(
           child: isLoading
               ? Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif',
                   width: 50.0,
                   height: 50.0,
                 )
@@ -228,8 +234,7 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
     );
   }
 
-
-  // Method to update a task
+  // Method to update a task in the list.
   void _updateTask(Task oldTask, Task newTask) {
     setState(() {
       int index = tasks.indexOf(oldTask);

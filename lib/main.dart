@@ -24,7 +24,7 @@ Future<void> main() async {
       // Provide the necessary Firebase configuration options
       options: const FirebaseOptions(
         apiKey: 'AIzaSyBWTXfw9CcTIT3ro0YVsAW3YpJtJ5A5Bnw',
-        appId: '1:780596576293:android:46ef370f591049076effcc',
+        appId: '1:780596576293:android:5431ce0289ab29be6effcc',
         messagingSenderId: '780596576293',
         projectId: 'coopapp-b584f',
         storageBucket: 'coopapp-b584f.appspot.com',

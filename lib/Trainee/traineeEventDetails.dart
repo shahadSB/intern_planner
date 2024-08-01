@@ -5,7 +5,16 @@ import 'package:intern_planner/Database/Event.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
+/* 
+  A StatefulWidget that displays the details of a specific event.
+  The event details are displayed in a read-only format with options to view
+  the title, description, date & time, and type of the event.
+*/
 class EventViewPage extends StatefulWidget {
+  /* 
+    Creates an instance of [EventViewPage].
+    [event] is the event to be displayed.
+  */
   final Event event;
 
   EventViewPage({required this.event});
@@ -27,19 +36,27 @@ class _EventViewPageState extends State<EventViewPage> {
   @override
   void initState() {
     super.initState();
+    // Initialize controllers with event data
     _titleController = TextEditingController(text: widget.event.title);
     _descriptionController = TextEditingController(text: widget.event.description);
     _typeController = TextEditingController(text: widget.event.type);
+
+    // Set initial date and time
     selectedDate = widget.event.dueDate;
     selectedTime = TimeOfDay(
       hour: widget.event.dueDate.hour,
       minute: widget.event.dueDate.minute,
     );
+
+    // Set initial type and selected trainees
     selectedType = widget.event.type;
     selectedTrainees = widget.event.student; // Initialize selected trainees
-    _fetchTrainees(); // Fetch trainees and set items
+
+    // Fetch list of trainees from Firestore
+    _fetchTrainees();
   }
 
+  // Fetches the list of trainees from Firestore based on the current user's supervisor ID.
   Future<void> _fetchTrainees() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -65,6 +82,7 @@ class _EventViewPageState extends State<EventViewPage> {
     });
   }
 
+  // Opens a date picker dialog to select a date.
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -79,6 +97,7 @@ class _EventViewPageState extends State<EventViewPage> {
     }
   }
 
+  // Opens a time picker dialog to select a time.
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -131,12 +150,15 @@ class _EventViewPageState extends State<EventViewPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                    SizedBox(height: 30),
+                  // Build read-only text fields for title and description
                   buildTextField('Title', _titleController, enabled: false),
                   SizedBox(height: 10),
                   buildTextField('Description', _descriptionController, enabled: false),
                   SizedBox(height: 10),
+                  // Build the date and time display field
                   buildDateTimeField(),
                   SizedBox(height: 10),
+                  // Build the dropdown field for event type
                   buildDropdownField(
                     'Type',
                     'Select type',
@@ -156,6 +178,12 @@ class _EventViewPageState extends State<EventViewPage> {
     );
   }
 
+  /* 
+    Builds a text field widget with the provided label and controller.
+    [label] is the text label for the field.
+    [controller] is the TextEditingController managing the text for the field.
+    [enabled] specifies whether the field is editable. Defaults to true.
+  */
   Widget buildTextField(String label, TextEditingController controller, {bool enabled = true, IconData? suffixIcon}) {
     return TextField(
       controller: controller,
@@ -174,6 +202,10 @@ class _EventViewPageState extends State<EventViewPage> {
     );
   }
 
+  /* 
+    Builds a widget to display the selected date and time.
+    Users can tap this field to open the date and time pickers.
+  */
   Widget buildDateTimeField() {
     return InkWell(
       onTap: () async {
@@ -208,6 +240,15 @@ class _EventViewPageState extends State<EventViewPage> {
     );
   }
 
+  /*
+    Builds a dropdown field for selecting event type.
+    [label] is the text label for the dropdown.
+    [hint] is the hint text displayed when no value is selected.
+    [selectedValue] is the currently selected value.
+    [items] is the list of possible values to choose from.
+    [onChanged] is the callback function triggered when the selected value changes.
+    [enabled] specifies whether the dropdown is interactive. Defaults to true.
+  */
   Widget buildDropdownField(
     String label,
     String hint,
@@ -247,6 +288,11 @@ class _EventViewPageState extends State<EventViewPage> {
     );
   }
 
+  /* 
+    Builds a read-only text field with the provided label and value.
+    [label] is the text label for the field.
+    [value] is the text displayed in the field.
+  */
   Widget buildReadOnlyField(String label, String value) {
     return TextField(
       decoration: InputDecoration(

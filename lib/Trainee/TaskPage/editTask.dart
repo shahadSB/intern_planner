@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intern_planner/Database/Task.dart';
 import 'package:intl/intl.dart';
-import 'taskTile.dart';
 
+// Page for editing an existing task.
 class EditTaskPage extends StatefulWidget {
   final Task task;
 
+  // Constructor to initialize the task to be edited.
   EditTaskPage({required this.task});
 
   @override
@@ -38,6 +39,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
     super.dispose();
   }
 
+  // Saves the updated task details to Firestore.
   Future<void> _saveTask() async {
     final newDueDate = DateTime(
       _dueDate.year,
@@ -68,6 +70,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
     Navigator.pop(context, updatedTask);
   }
 
+  // Allows the user to select a due time using a time picker dialog.
   Future<void> _selectDueTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -88,8 +91,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
         title: const Text(
           'Edit Task',
           style: TextStyle(
-            fontFamily: 'YourCustomFont', 
-            color: Color(0xFF31231A),   
+            fontFamily: 'YourCustomFont',
+            color: Color(0xFF31231A),
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
@@ -189,7 +192,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                   child: Text('Save'),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Color.fromARGB(255, 224, 97, 85), // Text color
+                    backgroundColor: Color.fromARGB(255, 224, 97, 85),
                     padding: EdgeInsets.symmetric(horizontal: 120, vertical: 15),
                     textStyle: TextStyle(
                       fontSize: 16,
@@ -208,6 +211,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
     );
   }
 
+  // Builds a text field with the specified label and controller.
   Widget _buildTextField({required String label, required TextEditingController controller}) {
     return TextField(
       controller: controller,
@@ -216,11 +220,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
         labelStyle: TextStyle(color: Color(0xFF31231A)),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFF31231A)),
-          borderRadius: BorderRadius.circular(30), // Rounded corners
+          borderRadius: BorderRadius.circular(30),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFF31231A)),
-          borderRadius: BorderRadius.circular(30), // Rounded corners
+          borderRadius: BorderRadius.circular(30),
         ),
         filled: true,
         fillColor: Colors.white,
@@ -228,6 +232,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
     );
   }
 
+  // Builds a dropdown field with the specified label, value, items, and onChanged callback.
   Widget _buildDropdownField({
     required String label,
     required String value,
@@ -246,11 +251,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
         labelStyle: TextStyle(color: Color(0xFF31231A)),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFF31231A)),
-          borderRadius: BorderRadius.circular(30), // Rounded corners
+          borderRadius: BorderRadius.circular(30),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFF31231A)),
-          borderRadius: BorderRadius.circular(30), // Rounded corners
+          borderRadius: BorderRadius.circular(30),
         ),
         filled: true,
         fillColor: Colors.white,

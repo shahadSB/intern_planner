@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "780596576293",
+    "project_id": "coopapp-b584f",
+    "storage_bucket": "coopapp-b584f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780596576293:android:5431ce0289ab29be6effcc",
+        "android_client_info": {
+          "package_name": "com.example.intern_planner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWTXfw9CcTIT3ro0YVsAW3YpJtJ5A5Bnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780596576293:android:46ef370f591049076effcc",
+        "android_client_info": {
+          "package_name": "com.tamimi.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWTXfw9CcTIT3ro0YVsAW3YpJtJ5A5Bnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

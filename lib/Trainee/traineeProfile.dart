@@ -7,40 +7,44 @@ import 'package:intern_planner/Login/login.dart';
 import 'package:intern_planner/Widgets/traineeNav.dart';
 import 'package:intl/intl.dart';
 
+/// ProfilePage is a StatefulWidget that displays and allows the user to edit their profile details.
+/// It also handles fetching and updating trainee information from Firestore.
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
- int _selectedIndex = 3;
-  final _formKey = GlobalKey<FormState>();
-  bool isEditing = false;
-  bool isUpdated = false;
-  double updatedOpacity = 0.0;
-  bool isLoading = true;
-  User? currentUser;
+  int _selectedIndex = 3; // Index for bottom navigation bar
+  final _formKey = GlobalKey<FormState>(); // Key to manage form state
+  bool isEditing = false; // Flag to toggle editing mode
+  bool isUpdated = false; // Flag to indicate profile update status
+  double updatedOpacity = 0.0; // Opacity for update confirmation
+  bool isLoading = true; // Flag to show loading state
+  User? currentUser; // Current authenticated user
   Trainee? trainee; // Trainee object
 
-  TextEditingController _birthDateController = TextEditingController();
+  TextEditingController _birthDateController = TextEditingController(); // Controller for birth date input
 
   @override
   void initState() {
     super.initState();
-    _initialize();
+    _initialize(); // Initialize the state by loading user data
   }
 
+  /// Initializes the profile page by fetching the current user and their details.
   Future<void> _initialize() async {
-    currentUser = await getCurrentUser();
+    currentUser = await getCurrentUser(); // Retrieve the currently authenticated user
     if (currentUser != null) {
-      await _fetchTraineeDetails();
+      await _fetchTraineeDetails(); // Fetch trainee details if user is authenticated
     } else {
       setState(() {
-        isLoading = false;
+        isLoading = false; // Set loading to false if no current user
       });
     }
   }
 
+  /// Fetches the details of the trainee from Firestore using the current user's ID.
   Future<void> _fetchTraineeDetails() async {
     if (currentUser != null) {
       await fetchTraineeDetails(
@@ -48,11 +52,11 @@ class _ProfilePageState extends State<ProfilePage> {
         (Trainee traineeData) async {
           setState(() {
             trainee = traineeData;
-            _birthDateController.text = traineeData.dob;
-            isLoading = false;
+            _birthDateController.text = traineeData.dob; // Populate birth date controller
+            isLoading = false; // Stop loading
           });
 
-          // Fetch supervisor name
+          // Fetch supervisor name if available
           if (traineeData.supervisorId.isNotEmpty) {
             await _fetchSupervisorName(traineeData.supervisorId);
           }
@@ -60,24 +64,25 @@ class _ProfilePageState extends State<ProfilePage> {
         (error) {
           print(error);
           setState(() {
-            isLoading = false;
+            isLoading = false; // Stop loading on error
           });
         }
       );
     } else {
       print('No current user found');
       setState(() {
-        isLoading = false;
+        isLoading = false; // Stop loading if no current user
       });
     }
   }
 
+  /// Fetches the name of the supervisor from Firestore based on the supervisor's ID.
   Future<void> _fetchSupervisorName(String supervisorId) async {
     await fetchSupervisorName(
       supervisorId,
       (supervisorName) {
         setState(() {
-          trainee?.supervisorId = supervisorName; // Assuming supervisorId holds the name here
+          trainee?.supervisorId = supervisorName; // Update supervisor name
         });
       },
       (error) {
@@ -86,6 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  /// Updates the profile data of the current user in Firestore.
   Future<void> _updateProfileData() async {
     if (currentUser == null || trainee == null) return;
 
@@ -101,11 +107,11 @@ class _ProfilePageState extends State<ProfilePage> {
       });
       setState(() {
         isUpdated = true;
-        updatedOpacity = 1.0;
+        updatedOpacity = 1.0; // Show update confirmation
       });
       Timer(Duration(seconds: 1), () {
         setState(() {
-          updatedOpacity = 0.0;
+          updatedOpacity = 0.0; // Hide update confirmation after delay
         });
       });
       print('Profile updated');
@@ -114,8 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -159,7 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: isLoading
               ? Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif', // Path to loading GIF
                   width: 50.0,
                   height: 50.0,
                 )
@@ -198,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               _buildTextField(
                                 label: 'ID',
                                 initialValue: trainee?.id ?? '',
-                                enabled: false,
+                                enabled: false, // Make this field read-only
                               ),
                               SizedBox(height: 12),
                               _buildTextField(
@@ -208,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onChanged: (value) {
                                   setState(() {
                                     if (trainee != null) {
-                                      trainee!.name = value;
+                                      trainee!.name = value; // Update trainee name
                                     }
                                   });
                                 },
@@ -222,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onChanged: (value) {
                                   setState(() {
                                     if (trainee != null) {
-                                      trainee!.email = value;
+                                      trainee!.email = value; // Update trainee email
                                     }
                                   });
                                 },
@@ -246,9 +251,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                     if (_formKey.currentState?.validate() ?? false) {
                                       _formKey.currentState?.save();
                                       setState(() {
-                                        isEditing = false;
+                                        isEditing = false; // Exit editing mode
                                       });
-                                      _updateProfileData();
+                                      _updateProfileData(); // Update profile data
                                     }
                                   },
                                   child: Padding(
@@ -274,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   icon: Icon(Icons.close),
                                   onPressed: () {
                                     setState(() {
-                                      isEditing = false;
+                                      isEditing = false; // Exit editing mode
                                     });
                                   },
                                 )
@@ -282,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
                                     setState(() {
-                                      isEditing = true;
+                                      isEditing = true; // Enter editing mode
                                     });
                                   },
                                 ),
@@ -316,14 +321,14 @@ class _ProfilePageState extends State<ProfilePage> {
         currentIndex: _selectedIndex,
         onItemTapped: (index) {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = index; // Update selected index for navigation bar
           });
         },
       ),
     );
   }
 
-  
+  /// Builds a customizable text field widget.
   Widget _buildTextField({
     required String label,
     required String initialValue,
@@ -354,6 +359,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Builds a date field widget that allows users to pick a date.
   Widget _buildDateField({
     required String label,
     required TextEditingController controller,
@@ -370,7 +376,7 @@ class _ProfilePageState extends State<ProfilePage> {
               );
               if (pickedDate != null) {
                 setState(() {
-                  controller.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  controller.text = DateFormat('yyyy-MM-dd').format(pickedDate); // Format and set date
                 });
               }
             }

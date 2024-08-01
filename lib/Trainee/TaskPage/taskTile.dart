@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intern_planner/Database/Task.dart';
 import 'package:intern_planner/Trainee/TaskPage/editTask.dart';
 
-
+/*
+  A widget that displays a task tile with task details fetched from Firestore.
+  The [TaskTile] widget fetches task details from Firestore using the provided
+  [taskId] and displays the task information in a styled container. The task
+  can be edited by tapping on the tile, which navigates to the [EditTaskPage].
+  The [updateTask] callback is used to update the task in the parent widget
+  after editing.
+*/
 class TaskTile extends StatelessWidget {
   final String taskId;
   final Function(Task, Task) updateTask;
@@ -130,6 +137,10 @@ class TaskTile extends StatelessWidget {
     );
   }
 
+  /* 
+    Returns a color based on the priority of the task.
+    [priority] is the priority level of the task ('High', 'Medium', 'Low').
+  */
   Color _getPriorityColor(String priority) {
     switch (priority) {
       case 'High':

@@ -187,9 +187,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   /* 
-  Assigns the task to the current trainee and saves it to Firestore.
-
-[taskData] is a map containing the task details to be saved.
+    Assigns the task to the current trainee and saves it to Firestore.
+    [taskData] is a map containing the task details to be saved.
   */
   Future<void> _assignTaskToTrainee(Map<String, dynamic> taskData) async {
     if (widget.currentUser == null) return;

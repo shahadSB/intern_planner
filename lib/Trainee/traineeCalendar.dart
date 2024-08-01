@@ -8,6 +8,7 @@ import 'package:intern_planner/Widgets/traineeNav.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// A StatefulWidget that displays a calendar with events for the trainee.
 class TraineeCalendarPage extends StatefulWidget {
   @override
   _TraineeCalendarPageState createState() => _TraineeCalendarPageState();
@@ -29,6 +30,7 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
     _getCurrentUser();
   }
 
+  // Retrieves the currently authenticated user and initiates event listening.
   void _getCurrentUser() {
     currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -36,6 +38,7 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
     }
   }
 
+  // Sets up a listener to Firestore for real-time updates on events.
   void _listenForEvents() {
     FirebaseFirestore.instance
         .collection('events')
@@ -49,59 +52,63 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
     });
   }
 
+  // Categorizes events into upcoming and past based on the current date.
   void _categorizeEvents() {
     final now = DateTime.now();
     upcomingEvents = events.where((event) => event.dueDate.isAfter(now)).toList();
     pastEvents = events.where((event) => event.dueDate.isBefore(now)).toList();
   }
 
+  // Returns a list of events for the specified day.
   List<Event> _getEventsForDay(DateTime day) {
     return events.where((event) {
       return isSameDay(event.dueDate, day);
     }).toList();
   }
 
+  // Displays a dialog with information about calendar markers.
   void _showInfoDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Calendar Information'),
         content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.red,
-                    radius: 10,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Deadlines'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 135, 181, 65),
-                    radius: 10,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Meetings'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 84, 166, 224),
-                    radius: 10),
-                  SizedBox(width: 10),
-                  Text('Deadlines and Meetings'),
-                ],
-              ),
-            ],
-          ),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: 10,
+                ),
+                SizedBox(width: 10),
+                Text('Deadlines'),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Color.fromARGB(255, 135, 181, 65),
+                  radius: 10,
+                ),
+                SizedBox(width: 10),
+                Text('Meetings'),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Color.fromARGB(255, 84, 166, 224),
+                  radius: 10,
+                ),
+                SizedBox(width: 10),
+                Text('Deadlines and Meetings'),
+              ],
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -112,7 +119,7 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
     );
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -323,7 +330,7 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
     );
   }
 
-
+  // Builds a card widget for displaying an individual event.
   Widget _buildEventCard(BuildContext context, Event event) {
     return InkWell(
       onTap: () {
@@ -387,6 +394,4 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
       ),
     );
   }
-  }
-  
-
+}
