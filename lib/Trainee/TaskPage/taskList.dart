@@ -223,12 +223,13 @@ class _TaskManagerScreenState extends State<TaskManagerScreen> {
           color: Colors.white,
         ),
       ),
-      bottomNavigationBar: TraineeNavigationBar(
+     bottomNavigationBar: TraineeNavigationBar(
         currentIndex: _selectedIndex,
-        onItemTapped: (index) {
+       onItemTapped: (context, index) {
           setState(() {
             _selectedIndex = index;
           });
+          onItemTapped(context, index); // Handle bottom navigation item tap
         },
       ),
     );

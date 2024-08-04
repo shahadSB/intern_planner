@@ -6,6 +6,8 @@ import 'package:intern_planner/Widgets/supervisorNav.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
+// This page allows the supervisor to view and update their profile information.
+
 class Supervisorprofile extends StatefulWidget {
   @override
   _SupervisorProfileState createState() => _SupervisorProfileState();
@@ -18,8 +20,8 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
   late double updatedOpacity = 0.0;
   late bool isLoading = true;
   User? currentUser;
-  int _selectedIndex = 1; 
-  
+  int _selectedIndex = 2;
+
   String email = '';
   String id = '';
   String name = '';
@@ -34,6 +36,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
     _fetchSupervisorDetails();
   }
 
+  // Fetches the current authenticated user from FirebaseAuth.
   Future<void> _getCurrentUser() async {
     try {
       currentUser = FirebaseAuth.instance.currentUser;
@@ -48,11 +51,12 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
     }
   }
 
+  // Fetches the supervisor's details from Firestore and updates the state.
   Future<void> _fetchSupervisorDetails() async {
     try {
       String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
-
       if (currentUserId == null) return;
+
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('SupVisUsers')
           .doc(currentUser!.uid)
@@ -83,6 +87,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
     }
   }
 
+  // Updates the supervisor's profile data in Firestore.
   Future<void> _updateProfileData() async {
     if (currentUser == null) return;
 
@@ -155,7 +160,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
         child: Center(
           child: isLoading
               ? Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif', 
                   width: 50.0,
                   height: 50.0,
                 )
@@ -303,19 +308,19 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
                 ),
         ),
       ),
-       bottomNavigationBar:SupervisorNavBar(
+      bottomNavigationBar: SupervisorNavBar(
         currentIndex: _selectedIndex,
-        onItemTapped: (index) {
-          onItemTapped(context, index); // Call the refactored method
+        onItemTapped: (context, index) {
           setState(() {
-            _selectedIndex = index; // Update the state
+            _selectedIndex = index;
           });
+          onItemTapped(context, index); // Handle bottom navigation item tap
         },
       ),
     );
   }
 
-
+  // Builds a custom text field for profile information input.
   Widget _buildTextField({
     required String label,
     String? initialValue,
@@ -353,6 +358,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
     );
   }
 
+  // Builds a custom date field for date of birth input.
   Widget _buildDateField({
     required String label,
     required TextEditingController controller,
@@ -377,10 +383,9 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
       child: AbsorbPointer(
         child: TextFormField(
           controller: controller,
-          
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: TextStyle(fontSize: 18.0,color: Color(0xFF31231A)),
+            labelStyle: TextStyle(fontSize: 18.0, color: Color(0xFF31231A)),
             border: OutlineInputBorder(
               borderSide: BorderSide(color: const Color.fromARGB(255, 255, 255, 255)), // Custom border color when enabled
               borderRadius: BorderRadius.circular(25.0),

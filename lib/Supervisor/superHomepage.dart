@@ -294,11 +294,11 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
       bottomNavigationBar: SupervisorNavBar(
         currentIndex: _selectedIndex,
-        onItemTapped: (index) {
-          onItemTapped(context, index); // Handle bottom navigation item tap
+        onItemTapped: (context, index) {
           setState(() {
             _selectedIndex = index;
           });
+          onItemTapped(context, index); // Handle bottom navigation item tap
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -453,24 +453,3 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 }
-
-// // A class representing an event in the calendar.
-// class CalendarEvent {
-//   final String id;
-//   final String title;
-//   final String type;
-//   final DateTime dueDate;
-
-//   CalendarEvent({required this.id, required this.title, required this.type, required this.dueDate});
-
-//   // Creates an instance of [CalendarEvent] from a Firestore document snapshot.
-//   factory CalendarEvent.fromFirestore(DocumentSnapshot doc) {
-//     final data = doc.data() as Map<String, dynamic>;
-//     return CalendarEvent(
-//       id: doc.id,
-//       title: data['title'] ?? '',
-//       type: data['type'] ?? 'Meeting',
-//       dueDate: (data['dueDate'] as Timestamp).toDate(),
-//     );
-//   }
-// }

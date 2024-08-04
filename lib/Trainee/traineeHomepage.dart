@@ -4,7 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intern_planner/Database/Event.dart';
 import 'package:intern_planner/Database/Task.dart';
 import 'package:intern_planner/Login/login.dart';
+import 'package:intern_planner/Trainee/TaskPage/taskList.dart';
+import 'package:intern_planner/Trainee/traineeCalendar.dart';
 import 'package:intern_planner/Trainee/traineeEventDetails.dart';
+import 'package:intern_planner/Trainee/traineeProfile.dart';
 import 'package:intern_planner/Widgets/traineeNav.dart';
 import 'package:intl/intl.dart';
 
@@ -250,10 +253,11 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
       ),
       bottomNavigationBar: TraineeNavigationBar(
         currentIndex: _selectedIndex,
-        onItemTapped: (index) {
+       onItemTapped: (context, index) {
           setState(() {
             _selectedIndex = index;
           });
+          onItemTapped(context, index); // Handle bottom navigation item tap
         },
       ),
     );
@@ -351,5 +355,34 @@ class _TraineeHomepageState extends State<TraineeHomepage> {
       default:
         return const Color(0xFF31231A);
     }
+  }
+}
+
+void onItemTapped(BuildContext context, int index) {
+  switch (index) {
+    case 0:
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TraineeCalendarPage()), // Navigate to Calendar page.
+      );
+      break;
+    case 1:
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TraineeHomepage()), // Navigate to Home page.
+      );
+      break;
+    case 2:
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TaskManagerScreen()), // Navigate to Tasks page.
+      );
+      break;
+    case 3:
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to Profile page.
+      );
+      break;
   }
 }

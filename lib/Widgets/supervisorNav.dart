@@ -3,15 +3,23 @@ import 'package:intern_planner/Supervisor/ManageTrainee/superTraineeList.dart';
 import 'package:intern_planner/Supervisor/superHomepage.dart';
 import 'package:intern_planner/Supervisor/superProfile.dart';
 
-/* 
-  This widget provides navigation options for the supervisor, including Trainee List,
-  Calendar, and Settings. The (currentIndex) determines the currently selected
-  tab, and (onItemTapped) is the callback function invoked when a tab is tapped.
+/*
+  This widget provides navigation options for the supervisor, including:
+    - Trainee List
+    - Calendar
+    - Settings
+  The [currentIndex] parameter determines the currently selected tab,
+  and the [onItemTapped] callback function is invoked when a tab is tapped.
 */
 class SupervisorNavBar extends StatelessWidget {
   final int currentIndex;
-  final Function(int) onItemTapped;
+  final Function(BuildContext, int) onItemTapped; 
 
+  /*
+    Constructor for the SupervisorNavBar:
+    Takes the [currentIndex] to highlight the selected tab and the [onItemTapped]
+    callback function to handle navigation.
+  */
   SupervisorNavBar({
     required this.currentIndex,
     required this.onItemTapped,
@@ -20,19 +28,19 @@ class SupervisorNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.white, // Background color of the navigation bar.
+      backgroundColor: Colors.white, 
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.groups_2), // Icon for Trainee List tab.
-          label: 'Trainee List', // Label for Trainee List tab.
+          icon: Icon(Icons.groups_2), 
+          label: 'Trainee List', 
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.home), // Icon for Calendar tab.
-          label: 'Calendar', // Label for Calendar tab.
+          icon: Icon(Icons.home), 
+          label: 'Calendar', 
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.settings), // Icon for Settings tab.
-          label: 'Settings', // Label for Settings tab.
+          icon: Icon(Icons.settings), 
+          label: 'Settings',
         ),
       ],
       currentIndex: currentIndex, // Currently selected tab index.
@@ -40,17 +48,16 @@ class SupervisorNavBar extends StatelessWidget {
       unselectedItemColor: Colors.grey, // Color for unselected tabs.
       showSelectedLabels: false, // Hide labels for selected tabs.
       showUnselectedLabels: false, // Hide labels for unselected tabs.
-      onTap: (index) => onItemTapped(index), // Callback for tab item tap events.
+      onTap: (index) => onItemTapped(context, index), // Pass context and index.
     );
   }
 }
 
 /*
-  Handles navigation to different pages based on the selected tab index.
-  - context: is the BuildContext used to navigate between pages.
-  - index: determines which page to navigate to based on the selected tab.
+  Handles navigation for the SupervisorNavBar: 
+  This function takes the [context] and [index] as parameters and
+  navigates to the corresponding page based on the index.
 */
-
 void onItemTapped(BuildContext context, int index) {
   switch (index) {
     case 0:
@@ -68,7 +75,7 @@ void onItemTapped(BuildContext context, int index) {
     case 2:
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Supervisorprofile()), // Navigate to Settings page.
+        MaterialPageRoute(builder: (context) => Supervisorprofile()), // Navigate to Supervisor Profile page.
       );
       break;
   }

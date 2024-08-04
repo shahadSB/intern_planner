@@ -320,11 +320,11 @@ class _TraineeCalendarPageState extends State<TraineeCalendarPage> {
       ),
       bottomNavigationBar: TraineeNavigationBar(
         currentIndex: _selectedIndex,
-        onItemTapped: (index) {
-          onItemTapped(context, index); // Call the refactored method
+       onItemTapped: (context, index) {
           setState(() {
-            _selectedIndex = index; // Update the state
+            _selectedIndex = index;
           });
+          onItemTapped(context, index); // Handle bottom navigation item tap
         },
       ),
     );
