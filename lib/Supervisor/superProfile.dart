@@ -14,26 +14,26 @@ class Supervisorprofile extends StatefulWidget {
 }
 
 class _SupervisorProfileState extends State<Supervisorprofile> {
-  final _formKey = GlobalKey<FormState>();
-  late bool isEditing = false;
-  late bool isUpdated = false;
-  late double updatedOpacity = 0.0;
-  late bool isLoading = true;
-  User? currentUser;
-  int _selectedIndex = 2;
+  final _formKey = GlobalKey<FormState>(); // Key for the form to validate and save state.
+  late bool isEditing = false; // Flag to track if the profile is in editing mode.
+  late bool isUpdated = false; // Flag to indicate if the profile was successfully updated.
+  late double updatedOpacity = 0.0; // Opacity for the "Updated" notification.
+  late bool isLoading = true; // Flag to show loading indicator.
+  User? currentUser; // The current logged-in user.
+  int _selectedIndex = 2; // The selected index for the bottom navigation bar.
 
-  String email = '';
-  String id = '';
-  String name = '';
-  String birthDate = '';
+  String email = ''; // Supervisor's email.
+  String id = ''; // Supervisor's employee ID.
+  String name = ''; // Supervisor's name.
+  String birthDate = ''; // Supervisor's birth date.
 
-  final TextEditingController birthDateController = TextEditingController();
+  final TextEditingController birthDateController = TextEditingController(); // Controller for the birth date field.
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
-    _fetchSupervisorDetails();
+    _getCurrentUser(); // Fetch the current user when the widget initializes.
+    _fetchSupervisorDetails(); // Fetch the supervisor details from Firestore.
   }
 
   // Fetches the current authenticated user from FirebaseAuth.
@@ -42,7 +42,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
       currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
         print('Current user ID: ${currentUser!.uid}');
-        _fetchSupervisorDetails();
+        _fetchSupervisorDetails(); // Fetch supervisor details if a user is logged in.
       } else {
         print('No current user found');
       }
@@ -70,19 +70,19 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
           name = data['Name'] ?? '';
           Timestamp timestamp = data['DateOfbirth'] as Timestamp;
           birthDate = DateFormat('yyyy-MM-dd').format(timestamp.toDate());
-          birthDateController.text = birthDate;
-          isLoading = false;
+          birthDateController.text = birthDate; // Set the birth date in the controller.
+          isLoading = false; // Stop loading once data is fetched.
         });
       } else {
         print('Supervisor not found');
         setState(() {
-          isLoading = false;
+          isLoading = false; // Stop loading even if supervisor is not found.
         });
       }
     } catch (e) {
       print('Error fetching supervisor details: $e');
       setState(() {
-        isLoading = false;
+        isLoading = false; // Stop loading on error.
       });
     }
   }
@@ -103,11 +103,11 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
       });
       setState(() {
         isUpdated = true;
-        updatedOpacity = 1.0;
+        updatedOpacity = 1.0; // Show the "Updated" notification.
       });
       Timer(Duration(seconds: 2), () {
         setState(() {
-          updatedOpacity = 0.0;
+          updatedOpacity = 0.0; // Hide the "Updated" notification after 2 seconds.
         });
       });
       print('Profile updated');
@@ -138,7 +138,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
               FirebaseAuth.instance.signOut().then((_) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to login page on logout.
                 );
               });
             },
@@ -246,7 +246,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
                                         isEditing = false;
                                         birthDate = birthDateController.text;
                                       });
-                                      _updateProfileData();
+                                      _updateProfileData(); // Update profile data on button press.
                                     }
                                   },
                                   child: Padding(
@@ -272,7 +272,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
                                     setState(() {
-                                      isEditing = true;
+                                      isEditing = true; // Enable editing mode.
                                     });
                                   },
                                 )
@@ -280,7 +280,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
                                   icon: Icon(Icons.close),
                                   onPressed: () {
                                     setState(() {
-                                      isEditing = false;
+                                      isEditing = false; // Disable editing mode.
                                     });
                                   },
                                 ),
@@ -292,12 +292,15 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                               decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 218, 218, 218),
+                                color: Colors.green,
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               child: Text(
-                                'Updated',
-                                style: TextStyle(color: Colors.white),
+                                'Updated!',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -320,14 +323,14 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
     );
   }
 
-  // Builds a custom text field for profile information input.
+  // Builds a custom text field for profile input.
   Widget _buildTextField({
     required String label,
-    String? initialValue,
+    required String initialValue,
     bool isPassword = false,
-    TextInputType inputType = TextInputType.text,
     bool enabled = true,
-    required Function(String) onChanged,
+    TextInputType inputType = TextInputType.text,
+    required ValueChanged<String> onChanged,
   }) {
     return TextFormField(
       initialValue: initialValue,
@@ -375,7 +378,7 @@ class _SupervisorProfileState extends State<Supervisorprofile> {
               );
               if (pickedDate != null) {
                 setState(() {
-                  controller.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                  controller.text = DateFormat('yyyy-MM-dd').format(pickedDate); // Format and set the selected date.
                 });
               }
             }

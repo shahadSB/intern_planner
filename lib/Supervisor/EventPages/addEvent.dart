@@ -1,24 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
+/// A page for adding events to the calendar, including title, description,
+/// date, time, type, and a list of selected trainees.
 class AddToCalendarPage extends StatefulWidget {
   @override
   _AddToCalendarPageState createState() => _AddToCalendarPageState();
 }
 
 class _AddToCalendarPageState extends State<AddToCalendarPage> {
+  // Form key to manage the state of the form.
   final _formKey = GlobalKey<FormState>();
+
+  // Variables to store selected date and time.
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay(hour: 9, minute: 41);
+
+  // Variables to store form input values.
   String? title;
   String? description;
   String? type;
   List<String> selectedTrainees = [];
 
+  /// Opens a date picker dialog and updates the selected date.
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -33,6 +40,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
     }
   }
 
+  /// Opens a time picker dialog and updates the selected time.
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -45,6 +53,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
     }
   }
 
+  /// Fetches the list of trainees from Firestore based on the current user's supervisor ID.
   Future<List<MultiSelectItem<String>>> _fetchTrainees() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -62,6 +71,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
         .toList();
   }
 
+  /// Adds a new event to Firestore and updates the selected trainees with the event reference.
   Future<void> _addEvent() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
@@ -95,8 +105,8 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
         title: const Text(
           'Add to Calendar',
           style: TextStyle(
-            fontFamily: 'YourCustomFont', // Replace with the desired font family
-            color: Color(0xFF31231A), // Set the text color
+            fontFamily: 'YourCustomFont', 
+            color: Color(0xFF31231A), 
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
@@ -232,6 +242,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
     );
   }
 
+  /// Builds a text field with given label, hint, and onSaved callback.
   Widget buildTextField(String label, String hint, FormFieldSetter<String> onSaved, bool isRequired, {IconData? suffixIcon}) {
     return TextFormField(
       decoration: InputDecoration(
@@ -257,6 +268,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
     );
   }
 
+  /// Builds a date and time field that shows the selected date and time.
   Widget buildDateTimeField() {
     return InkWell(
       onTap: () async {
@@ -290,6 +302,7 @@ class _AddToCalendarPageState extends State<AddToCalendarPage> {
     );
   }
 
+  /// Builds a dropdown field for selecting the event type.
   Widget buildDropdownField(String label, String hint, FormFieldSetter<String> onSaved) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(

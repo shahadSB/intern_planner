@@ -6,38 +6,42 @@ import 'package:intern_planner/Login/login.dart';
 import 'package:intern_planner/Widgets/traineeNav.dart';
 import 'package:intl/intl.dart';
 
+// This page allows the trainee to view and update their profile information.
+
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  int _selectedIndex = 3;
-  final _formKey = GlobalKey<FormState>();
-  bool isEditing = false;
-  bool isUpdated = false;
-  double updatedOpacity = 0.0;
-  bool isLoading = true;
-  User? currentUser;
+  int _selectedIndex = 3; // Index for the bottom navigation bar
+  final _formKey = GlobalKey<FormState>(); // Key to identify the form
+  bool isEditing = false; // Indicates if the profile is in edit mode
+  bool isUpdated = false; // Indicates if the profile has been updated
+  double updatedOpacity = 0.0; // Opacity for the "Updated" message
+  bool isLoading = true; // Indicates if the data is being loaded
+  User? currentUser; // Holds the current Firebase user
 
+  // Profile fields
   String _id = '';
   String _name = '';
   String _email = '';
   String _supervisorId = '';
   String _supervisorName = '';
-  TextEditingController _birthDateController = TextEditingController();
+  TextEditingController _birthDateController = TextEditingController(); // Controller for the date of birth field
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser();
+    _getCurrentUser(); // Fetch the current user when the widget is initialized
   }
 
+  // Fetches the current logged-in user
   Future<void> _getCurrentUser() async {
     try {
       currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        await _fetchTraineeDetails();
+        await _fetchTraineeDetails(); // Fetch trainee details if user is found
       } else {
         print('No current user found');
       }
@@ -46,6 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Fetches the trainee details from Firestore
   Future<void> _fetchTraineeDetails() async {
     try {
       String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
@@ -61,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           _supervisorId = data['supervisorId'] ?? '';
 
-          // Fetch supervisor name
+          // Fetch supervisor name if supervisorId is present
           if (_supervisorId.isNotEmpty) {
             await _fetchSupervisorName(_supervisorId);
           }
@@ -73,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _birthDateController.text = data['dateOfBirth'] != null
                 ? DateFormat('yyyy-MM-dd').format(DateTime.parse(data['dateOfBirth']))
                 : '';
-            isLoading = false;
+            isLoading = false; // Data loading complete
           });
         } else {
           print('Trainee not found');
@@ -95,6 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Fetches the supervisor's name from Firestore
   Future<void> _fetchSupervisorName(String supervisorId) async {
     try {
       DocumentSnapshot supervisorDoc = await FirebaseFirestore.instance
@@ -105,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (supervisorDoc.exists) {
         final supervisorData = supervisorDoc.data() as Map<String, dynamic>;
         setState(() {
-          _supervisorName = supervisorData['Name'] ?? 'Not Assigned Yet'; // Default to 'Unknown' if name is not present
+          _supervisorName = supervisorData['Name'] ?? 'Not Assigned Yet'; // Default to 'Not Assigned Yet' if name is not present
         });
       } else {
         print('Supervisor not found');
@@ -118,6 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  // Updates the profile data in Firestore
   Future<void> _updateProfileData() async {
     if (currentUser == null) return;
 
@@ -190,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Center(
           child: isLoading
               ? Image.asset(
-                  'resources/tamimi.gif', // Path to your GIF
+                  'resources/tamimi.gif', 
                   width: 50.0,
                   height: 50.0,
                 )
@@ -351,8 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-
-
+  // Builds a text field with the given properties
   Widget _buildTextField({
     required String label,
     required String initialValue,
@@ -371,7 +377,6 @@ class _ProfilePageState extends State<ProfilePage> {
           borderSide: BorderSide(color: const Color.fromARGB(255, 255, 255, 255)), // Custom border color when enabled
           borderRadius: BorderRadius.circular(25.0),
         ),
-        enabled: enabled,
         constraints: BoxConstraints(
           minWidth: 270.0,
           minHeight: 45.0,
@@ -383,6 +388,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  // Builds a date field with the given properties
   Widget _buildDateField({
     required String label,
     required TextEditingController controller,

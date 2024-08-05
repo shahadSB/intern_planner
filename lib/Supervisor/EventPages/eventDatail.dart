@@ -5,9 +5,10 @@ import 'package:intern_planner/Database/Event.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
+/// A page to view and edit details of an event.
 class EventDetailPage extends StatefulWidget {
-  final Event event;
-  final Function(Event) onSave;
+  final Event event; // The event object to display and edit
+  final Function(Event) onSave; // Callback function to notify parent widget about save
 
   EventDetailPage({required this.event, required this.onSave});
 
@@ -21,15 +22,16 @@ class _EventDetailPageState extends State<EventDetailPage> {
   late TextEditingController _typeController;
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
-  bool isEditing = false;
+  bool isEditing = false; // Flag to indicate if the page is in edit mode
   List<MultiSelectItem<String>> traineeItems = [];
   List<String> selectedTrainees = [];
-  Map<String, String> traineeNames = {}; // Map to store ID-to-name mapping
+  Map<String, String> traineeNames = {}; // Map to store ID-to-name mapping for trainees
   String? selectedType;
 
   @override
   void initState() {
     super.initState();
+    // Initialize controllers with event data
     _titleController = TextEditingController(text: widget.event.title);
     _descriptionController = TextEditingController(text: widget.event.description);
     _typeController = TextEditingController(text: widget.event.type);
@@ -43,6 +45,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     _fetchTrainees(); // Fetch trainees and set items
   }
 
+  /// Fetches the list of trainees from Firestore and updates the traineeItems list.
   Future<void> _fetchTrainees() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -69,6 +72,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     });
   }
 
+  /// Opens a date picker to select a new date.
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -83,6 +87,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     }
   }
 
+  /// Opens a time picker to select a new time.
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -95,6 +100,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     }
   }
 
+  /// Saves the updated event details to Firestore.
   Future<void> _saveEvent() async {
     if (isEditing) {
       final event = Event(
@@ -135,12 +141,14 @@ class _EventDetailPageState extends State<EventDetailPage> {
     }
   }
 
+  /// Toggles between edit and view modes.
   void _toggleEdit() {
     setState(() {
       isEditing = !isEditing;
     });
   }
 
+  /// Exits edit mode and resets fields to original values.
   void _exitEditMode() {
     setState(() {
       isEditing = false;
@@ -157,6 +165,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     });
   }
 
+  /// Deletes the event from Firestore.
   Future<void> _deleteEvent() async {
     try {
       await FirebaseFirestore.instance
@@ -304,6 +313,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     );
   }
 
+  /// Builds a text field with the specified label and controller.
   Widget buildTextField(String label, TextEditingController controller, {bool enabled = true}) {
     return TextField(
       controller: controller,
@@ -316,6 +326,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     );
   }
 
+  /// Builds a read-only field with the specified label and value.
   Widget buildReadOnlyField(String label, String value) {
     return InputDecorator(
       decoration: InputDecoration(
@@ -326,6 +337,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
     );
   }
 
+  /// Builds a date and time selection field.
   Widget buildDateTimeField() {
     return Row(
       children: <Widget>[
@@ -358,7 +370,9 @@ class _EventDetailPageState extends State<EventDetailPage> {
     );
   }
 
-  Widget buildDropdownField(String label, String hint, String? value, List<String> options, {ValueChanged<String?>? onChanged, bool enabled = true}) {
+  /// Builds a dropdown field with the specified label, hint, value, and options.
+  Widget buildDropdownField(String label, String hint, String? value, List<String> options, 
+  {ValueChanged<String?>? onChanged, bool enabled = true}) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
